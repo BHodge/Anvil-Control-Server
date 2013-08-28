@@ -258,60 +258,60 @@ public class ACSModel extends Observable {
 	 */
 	public boolean saveConfig(){
 		
-		if(config.delete()){
-			try {
+		config.delete();
+		try {
+			
+			if(config.createNewFile()){
+				FileWriter fstream = new FileWriter(config);
+				BufferedWriter out = new BufferedWriter(fstream);
+				out.write("// Anvil Configuration File\n\n");
+				out.write("// The number of Quick Launch files to keep track of.\n");
 				
-				if(config.createNewFile()){
-					FileWriter fstream = new FileWriter(config);
-					BufferedWriter out = new BufferedWriter(fstream);
-					out.write("// Anvil Configuration File\n\n");
-					out.write("// The number of Quick Launch files to keep track of.\n");
-					
-					int qlnum = 0;
-					for(int x = 0; x < quick_launch_files.length; x++){
-						if(quick_launch_files[x] != null) qlnum++;
+				int qlnum = 0;
+				for(int x = 0; x < quick_launch_files.length; x++){
+					if(quick_launch_files[x] != null) qlnum++;
+				}
+				out.write("QL_FILES="+qlnum+"\n");
+				
+				for(int x = 0; x < quick_launch_files.length; x++){
+					if(quick_launch_files[x] != null){
+						out.write("QL_PATH="+quick_launch_files[x].getCanonicalPath()+"\n");
 					}
-					out.write("QL_FILES="+qlnum+"\n");
-					
-					for(int x = 0; x < quick_launch_files.length; x++){
-						if(quick_launch_files[x] != null){
-							out.write("QL_PATH="+quick_launch_files[x].getCanonicalPath()+"\n");
-						}
-					}
-					
-					
-					out.write("\n// The server name that is visible to clients.\n");
-					out.write("SERV_NAME=" + serv_name + "\n\n");
-					out.write("// Require password on connect.\n");
-					
-					if(psw_enable){
-						out.write("PSWD_ENABLED=true\n");
-						out.write("SERV_PSWD="+password+"\n");	
-						out.write("SERV_SALT="+salt+"\n\n");
-					} else {
-						out.write("PSWD_ENABLED=false\n");
-						out.write("SERV_PSWD=\n");
-						out.write("SERV_SALT=\n\n");
-					}
-					
-					out.write("// Port the server runs on.\n");
-					out.write("SERV_PORT=" + port + "\n\n");
-					out.write("// Publicly broadcast server presence over LAN.\n");
-					if(bcast_enabled){
-						out.write("BROADCAST_ENABLED=true\n");
-					}else{
-						out.write("BROADCAST_ENABLED=false\n");
-					}
-					out.close();
-					System.out.println("Successfully saved configuration!");
-					return true;
 				}
 				
-			} catch (IOException e) {
-				System.err.println("Error saving to new file");
+				
+				out.write("\n// The server name that is visible to clients.\n");
+				out.write("SERV_NAME=" + serv_name + "\n\n");
+				out.write("// Require password on connect.\n");
+				
+				if(psw_enable){
+					out.write("PSWD_ENABLED=true\n");
+					out.write("SERV_PSWD="+password+"\n");	
+					out.write("SERV_SALT="+salt+"\n\n");
+				} else {
+					out.write("PSWD_ENABLED=false\n");
+					out.write("SERV_PSWD=\n");
+					out.write("SERV_SALT=\n\n");
+				}
+				
+				out.write("// Port the server runs on.\n");
+				out.write("SERV_PORT=" + port + "\n\n");
+				out.write("// Publicly broadcast server presence over LAN.\n");
+				if(bcast_enabled){
+					out.write("BROADCAST_ENABLED=true\n");
+				}else{
+					out.write("BROADCAST_ENABLED=false\n");
+				}
+				out.close();
+				System.out.println("Successfully saved configuration!");
+				return true;
 			}
 			
-		} 
+		} catch (IOException e) {
+			System.err.println("Error saving to new file");
+		}
+		
+	
 		
 		// File was not saved
 		return false; 

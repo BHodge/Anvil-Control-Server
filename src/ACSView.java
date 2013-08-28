@@ -179,11 +179,11 @@ public class ACSView extends JFrame implements ModelChangeListener {
         
         createSysTray();
         // set default close action (if tray supported, hide instead)
-        if(trayIcon != null){
-        	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        }else{
-        	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        }
+        //if(trayIcon != null){
+        //	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        //}else{
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //}
         
         ImageIcon im = new ImageIcon(getClass().getResource(YELLOW_ICON));
         setIconImage(im.getImage());

@@ -142,7 +142,7 @@ public class SmartRobot extends Robot {
 		if(keyCode < 0){
 			keyCode = 0-keyCode;
 			keyType(keyCode, KeyEvent.VK_SHIFT);
-			int i = KeyEvent.VK_ENTER;
+			//int i = KeyEvent.VK_ENTER;
 			return;
 		}
 
