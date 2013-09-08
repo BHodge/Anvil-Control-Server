@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Extended functionality for the Robot Class
+ * Extended keyboard functionality for the Robot Class
  * 
  * @author Demiurg
  * @author Bryan Hodge
@@ -13,6 +13,14 @@ import java.util.Map;
 public class SmartRobot extends Robot {
 	private Map<Character, ShiftIndex> keyMap;
 	
+	
+	/**
+	 *  Data Structure for Keyboard Keycode
+	 *  and flag for shift requirement.
+	 *  (Some keys on a keyboard share the same keycode,
+	 *  for example: ';' and ':')
+	 * @author Bryan Hodge
+	 */
 	private class ShiftIndex{ 
 		public int keyVal; 
 		public boolean shift;
@@ -24,14 +32,12 @@ public class SmartRobot extends Robot {
 	
 	public SmartRobot() throws AWTException {
 		super();
-		
-		// Setup the map for characters that need
-		// to use VK_ keycodes or need to hold shift
-		// when pressing an associated key
-		
+
+		// The anvil client sends over some non standard keycodes
+		// (Android does not include the awt package)
 		keyMap = new HashMap<Character, ShiftIndex>();
 		
-		// Add Uppercase letter keys (sent as negatives)
+		// Add Uppercase letter keys (sent as negatives of the lowercase)
 		for(int x = -65; x > -91; x--){
 			keyMap.put((char)x, new ShiftIndex((0-x),true));
 		}
@@ -97,7 +103,28 @@ public class SmartRobot extends Robot {
 		
 		// F1 - F12 keys dont seem to change codes
 		// Numbers dont seem to change codes
-		// Lower case letters map to uppercase codes 
+		// Lower case letters map to the uppercase codes (uppercase require shift key)
+	}
+	
+	
+	/**
+	 * Press a key on the 'keyboard', the keycode is checked against
+	 * the key map for non standard keys.
+	 * @param keyCode - Keycode of the key to type
+	 */
+	public void typeKeycode(int keyCode) {
+		
+		if( keyMap.containsKey((char)keyCode) ){
+			ShiftIndex shi = keyMap.get((char)keyCode);
+			if(shi.shift){
+				keyType(shi.keyVal, KeyEvent.VK_SHIFT);
+			}else{
+				keyType(shi.keyVal);
+			}
+		} else {
+			keyType(keyCode);
+		}
+		
 	}
 
 	public void keyType(int keyCode) {
@@ -121,125 +148,5 @@ public class SmartRobot extends Robot {
 			System.err.println("Error keycode: " + ((Integer)keyCode).toString() );
 		}
 	}
-
-	public void type(String text) {
-		String textUpper = text.toUpperCase();
-
-		for (int i = 0; i < text.length(); ++i) {
-			typeChar(textUpper.charAt(i));
-		}
-	}
-
-	public void typeChar(int c) {
-
-		boolean shift = true;
-		int keyCode = c;
-		
-		// Uppercase characters are sent as negative values
-		// of their normal uppercase value, which lower
-		// case characters are instead sent as;
-		// This makes the logic for applying the shift key easier.
-		if(keyCode < 0){
-			keyCode = 0-keyCode;
-			keyType(keyCode, KeyEvent.VK_SHIFT);
-			//int i = KeyEvent.VK_ENTER;
-			return;
-		}
-
-		switch (c) {
-		case '~':
-			keyCode = (int) '`';
-			break;
-		case '!':
-			keyCode = (int) '1';
-			break;
-		case '@':
-			keyCode = (int) '2';
-			break;
-		case '#':
-			keyCode = (int) '3';
-			break;
-		case '$':
-			keyCode = (int) '4';
-			break;
-		case '%':
-			keyCode = (int) '5';
-			break;
-		case '^':
-			keyCode = (int) '6';
-			break;
-		case '&':
-			keyCode = (int) '7';
-			break;
-		case '*':
-			keyCode = (int) '8';
-			break;
-		case '(':
-			keyCode = (int) '9';
-			break;
-		case ')':
-			keyCode = (int) '0';
-			break;
-		case ':':
-			keyCode = (int) ';';
-			break;
-		case '_':
-			keyCode = (int) '-';
-			break;
-		case '+':
-			keyCode = (int) '=';
-			break;
-		case '|':
-			keyCode = (int) '\\';
-			break;
-		case '"':
-			keyCode = KeyEvent.VK_QUOTE;
-			break;
-		case '?':
-			keyCode = (int) '/';
-			break;
-		case '{':
-			keyCode = (int) '[';
-			break;
-		case '}':
-			keyCode = (int) ']';
-			break;
-		case '<':
-			keyCode = (int) ',';
-			break;
-		case '>':
-			keyCode = (int) '.';
-			break;
-		default:
-			keyCode = (int) c;
-			shift = false;
-		}
-		if (shift) {
-			keyType(keyCode, KeyEvent.VK_SHIFT);
-		} else {
-			keyType(keyCode);
-		}
-	}
 	
-	
-	
-	public void typeKeycode(int c) {
-	
-		if( keyMap.containsKey((char)c) ){
-			ShiftIndex shi = keyMap.get((char)c);
-			if(shi.shift){
-				keyType(shi.keyVal, KeyEvent.VK_SHIFT);
-			}else{
-				keyType(shi.keyVal);
-			}
-		} else {
-			keyType(c);
-		}
-		
-	}
-
-	/*
-	 * private int charToKeyCode(char c) { switch (c) { case ':': return ';'; }
-	 * return (int)c; }
-	 */
 }
